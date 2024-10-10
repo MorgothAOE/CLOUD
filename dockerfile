@@ -8,7 +8,7 @@ WORKDIR /
 RUN pip install poetry
 
 # 5. Instala las dependencias del proyecto sin crear el entorno virtual
-RUN poetry config virtualenvs.create false && poetry install --no-dev --no-interaction --no-ansi
+RUN poetry install
 
 # 7. Exponer el puerto donde correrá la aplicación Flask
 EXPOSE 5000
