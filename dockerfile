@@ -2,7 +2,10 @@
 FROM python:3.10
 
 # 2. Establece el directorio de trabajo en el contenedor
-WORKDIR /
+WORKDIR ./project
+
+# 6. Copia todo el contenido del proyecto en el contenedor
+COPY . /project
 
 # 4. Instala Poetry
 RUN pip install poetry
