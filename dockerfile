@@ -1,8 +1,8 @@
 # 1. Usa una imagen base de Python
-FROM python:3.9-slim
+FROM python:3.10
 
 # 2. Establece el directorio de trabajo en el contenedor
-WORKDIR /src
+WORKDIR 
 
 # 3. Copia el archivo pyproject.toml y poetry.lock (si lo tienes)
 COPY pyproject.toml poetry.lock* /src/
@@ -14,12 +14,16 @@ RUN pip install poetry
 RUN poetry config virtualenvs.create false && poetry install --no-dev --no-interaction --no-ansi
 
 # 6. Copia todo el contenido del proyecto en el contenedor
-COPY . /src
+COPY ./dock
 
 # 7. Exponer el puerto donde correrá la aplicación Flask
 EXPOSE 5000
 
 RUN docker-compose up -d
 
+RUN flask resetdb
+
+RUN flask seedsdb
+
 # 8. Definir el comando por defecto para correr la aplicación
-CMD ["flask", "run", "--host=0.0.0.0"]
+CMD ["flask", "run"]
