@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block title %}Login{% endblock %}
+{% block head %}
+ {{ super() }}
+{% endblock %}
+{% block navbar %}
+{{ super() }}
+{% endblock %}
+{% block content %}    
+    <h1>Usuarios del Sistema</h1>
+    {% block search %}
+    <ul>		
+		<div class='rg-container'>
+            <table class='rg-table' summary='Hed'>
+                <tbody>    
+                {% for ord in orders %}
+					<tr  class=''>
+						<td class='text ' data-title='Material'>{{ ord.material }}</td>
+						<td class='text ' data-title='Nombre de usuario'>{{ ord.cantidad }}</td>
+					</tr>                
+                {% endfor %}
+                </tbody>
+            </table>
+		</div>
+	</ul>     
+    {% endblock %} 
+{% endblock %}

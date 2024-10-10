@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="es">
+<head>
+    {% block head %}
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+        <!-- Agrega el enlace a los estilos de Bootstrap 5 -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        <title>{% block title %}Inicio{% endblock %}</title>
+    {% endblock %}
+    
+</head>
+<body>
+
+<!-- Barra de navegación -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                {% block navbar %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/auth/">Iniciar Sesion</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/auth/signin">Registrarse</a>
+                        </li>
+                {% endblock %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Contenido principal -->
+<main class="container mt-4">
+
+    <div>
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <div aria-live="polite" aria-atomic="true" class="position-relative">
+        <!-- Position it: -->
+        <!-- - `.toast-container` for spacing between toasts -->
+        <!-- - `top-0` & `end-0` to position the toasts in the upper right corner -->
+        <!-- - `.p-3` to prevent the toasts from sticking to the edge of the container  -->
+        <div class="toast-container position-fixed bottom-1 end-0 p-2">
+      
+          <!-- Then put toasts within -->
+          
+          {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+              {% for category, message in messages %}
+                  <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="10000">
+                    <div class="toast-header">
+                      <!--img src="..." class="rounded me-2" alt="..."-->
+                      <strong class="me-auto">{{category|upper}}</strong>
+                      <small>NOW</small>
+                      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                      {{message}}
+                    </div>
+                  </div>
+              <!--
+              <p class="flash {{ category }}">{{ message }}</p>
+              -->            
+              {% endfor %}
+          {% endif %}
+          {% endwith %}
+        </div>
+      </div>
+
+
+            
+
+
+      
+    <!-- Puedes añadir más contenido aquí -->
+</main>
+
+<!-- Pie de página -->
+<footer class="bg-dark text-light text-center py-2">
+    {% block footer %}
+    {% endblock %}
+</footer>
+
+<script>
+    function sleep(ms) {
+        console.log(ms)
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function cargarToasts(elems){
+        for(let i = 0; i < elems.length; i++){
+            let toastBootstrap = bootstrap.Toast.getOrCreateInstance(elems[i])
+            toastBootstrap.show()
+            await sleep((i+1) * 1000);
+        }
+    }
+
+    window.addEventListener('load', (event) => {
+        const toastLiveExample = document.getElementsByClassName('toast')
+        cargarToasts(toastLiveExample)  
+    });
+    
+    
+</script>
+
+<!-- Agrega los scripts de Bootstrap 5 (Popper.js está incluido) -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+
+
+</body>
+</html>
