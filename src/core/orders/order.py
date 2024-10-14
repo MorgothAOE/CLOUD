@@ -14,9 +14,12 @@ class Order(db.Model):
     __tablename__ = "orders"
     
     id = db.Column(db.Integer, primary_key=True, unique=True)
-    material = db.Column(db.String(255))
+    material_id = db.Column(db.Integer, db.ForeignKey('material.id'), nullable=False)
     cantidad = db.Column(db.Float)
-    
+    provider_id = db.Column(db.Integer, db.ForeignKey('provider.id'), default=0)
+    entregado = db.Column(db.Boolean, default=False)
+    material = db.relationship("Material", backref="orders")
+    provider = db.relationship("Provider", backref="providers")
     updated_at = db.Column(
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
     )
