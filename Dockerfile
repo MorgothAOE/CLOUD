@@ -23,4 +23,4 @@ EXPOSE 5000
 #RUN flask seedsdb
 
 # 8. Definir el comando por defecto para correr la aplicación
-CMD ["gunicorn", "--bind", "0.0.0.0:$PORT", "app:app"]
+CMD ["gunicorn", "app:app"]
