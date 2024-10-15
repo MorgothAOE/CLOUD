@@ -11,7 +11,8 @@ COPY pyproject.toml poetry.lock* ./
 RUN pip install poetry
 
 # 5. Instala las dependencias del proyecto sin crear el entorno virtual
-RUN poetry install
+RUN poetry config virtualenvs.create false && \
+    poetry install --no-dev --no-interaction --no-ansi
 
 COPY . .
 
