@@ -16,11 +16,11 @@ RUN poetry install
 # 7. Exponer el puerto donde correrá la aplicación Flask
 EXPOSE 5000
 
-RUN docker-compose up -d
+#RUN docker-compose up -d
 
-RUN flask resetdb
+#RUN flask resetdb
 
-RUN flask seedsdb
+#RUN flask seedsdb
 
 # 8. Definir el comando por defecto para correr la aplicación
-CMD ["flask", "run"]
+CMD ["gunicorn", "--bind", "0.0.0.0:$PORT", "app:app"]
