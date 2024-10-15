@@ -27,10 +27,39 @@
           ],
           "responses": {
             "200": {
-              "description": "User granted access"
+              "description": " 'login':True "
             },
-            "400": {
-              "description": "Invalid request data"
+            "400 1": {
+              "description": " 'error':'Parámetros inválidos' "
+            },
+            "400 2": {
+              "description": " 'error':'No existe el  usuario' "
+            }
+          }
+        }
+      },
+      "/api/test": {
+        "get": {
+          "description": "Testeo de jwt",
+          "produces": [
+            "application/json"
+          ],          
+          "responses": {
+            "200": {
+              "description": "sarasa"
+            }
+          }
+        }
+      },
+      "/api/logout": {
+        "post": {
+          "description": "Cierre de sesion del usuario logeado",
+          "produces": [
+            "application/json"
+          ],          
+          "responses": {
+            "200": {
+              "description": " 'logout': True"
             }
           }
         }

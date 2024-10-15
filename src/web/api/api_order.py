@@ -64,8 +64,10 @@ def test():
     testea jwt nada mas
     """
     user = get_jwt_identity()
-    print(user)
-    return 'sarasa', 200
+    if user:
+        return 'sarasa', 200
+    else:
+        return 'no hay jwt creado',400
 
 
 @api_order_blueprint.post("/front-google-login")
