@@ -1,5 +1,7 @@
 from datetime import datetime
 from src.core.database import db
+from src.core.materials.material import Material
+from src.core.providers.provider import Provider
 
 
 """
@@ -14,12 +16,12 @@ class Order(db.Model):
     __tablename__ = "orders"
     
     id = db.Column(db.Integer, primary_key=True, unique=True)
-    material_id = db.Column(db.Integer, db.ForeignKey('material.id'), nullable=False)
+    material_id = db.Column(db.Integer, db.ForeignKey('materials.id'), nullable=False)
     cantidad = db.Column(db.Float)
-    provider_id = db.Column(db.Integer, db.ForeignKey('provider.id'), default=0)
+    provider_id = db.Column(db.Integer, db.ForeignKey('providers.id'), default=-1)
     entregado = db.Column(db.Boolean, default=False)
-    material = db.relationship("Material", backref="orders")
-    provider = db.relationship("Provider", backref="providers")
+    #material = db.relationship("Material", backref="orders")
+    #provider = db.relationship("Provider", backref="providers")
     updated_at = db.Column(
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
     )

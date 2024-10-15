@@ -6,9 +6,11 @@ from flask import flash
 from flask import session
 from flask import jsonify
 from src.core import orders
+from src.core import providers
 from src.web.schemas.order_schema import order_schema
 from flask_cors import CORS
 import requests
+from src.web.helpers.auth import api_mail_parse
 
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
@@ -18,14 +20,14 @@ from flask_jwt_extended import set_refresh_cookies
 from flask_jwt_extended import set_access_cookies
 from flask_jwt_extended import unset_jwt_cookies
 
-api_order_blueprint = Blueprint("api_order", __name__, url_prefix="/api/order")
+api_order_blueprint = Blueprint("api_order", __name__, url_prefix="/api")
 """
 Agrego un blueprint nuevo para manejar ordenes.
 uso el prefijo /order para todo el controlador
 """
 
 """OLD APP IMPLEMENTATION"""
-@api_order_blueprint.post("/")
+@api_order_blueprint.post("/login")
 def login():
     """
     api que se encarga de corroborar los datos y en caso de ser correctos
@@ -39,7 +41,7 @@ def login():
         return {"error": "Parámetros inválidos"}, 400
     if (api_mail_parse(email)):
         return {"error": "Parámetros inválidos"}, 400
-    user = auth.check_user(email, password)
+    user = providers.check_provider(email, password)
     if not user:
         return {"error": "No existe el  usuario"}, 400
     
@@ -81,7 +83,7 @@ def frontLoginGoogle():
             "Authorization": f"Bearer {token_acceso}"
         }).json()
         if "email" in personData:
-            user = auth.find_user_by_email(personData['email'])
+            user = providers.find_user_by_email(personData['email'])
             if user:
                 access_token = create_access_token(
                     identity={"email": personData['email']})

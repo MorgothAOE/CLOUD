@@ -1,0 +1,53 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "Access API",
+      "version": "1.0.0"
+    },
+    "paths": {
+      "/api/login": {
+        "post": {
+          "description": "Otorga acceso a un usuario registrado",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "Datos de usuario",
+              "in": "body",
+              "description": "Datos JSON para la api",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/LoginData"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "User granted access"
+            },
+            "400": {
+              "description": "Invalid request data"
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "LoginData": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+  
