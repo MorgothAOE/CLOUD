@@ -22,8 +22,14 @@ from flask_jwt_extended import set_refresh_cookies
 from flask_jwt_extended import set_access_cookies
 from flask_jwt_extended import unset_jwt_cookies
 
-# 1. Endpoint para listar todas las órdenes
-@api_blueprint.get("/order")
+
+order_blueprint = Blueprint("order", __name__, url_prefix="/order")
+"""
+Agrego un blueprint nuevo para manejar ordenes.
+uso el prefijo /order para todo el controlador
+"""
+
+@api_blueprint.get()
 @jwt_required()
 def list_all_orders():
     """
@@ -35,7 +41,7 @@ def list_all_orders():
 
 
 
-@api_blueprint.get("/order/material/<int:material_id>")
+@api_blueprint.get("/material/<int:material_id>")
 @jwt_required()
 def list_orders_by_material(material_id):
     """
@@ -50,7 +56,7 @@ def list_orders_by_material(material_id):
 
 
 
-@api_blueprint.get("/order/material/name/<string:material_name>")
+@api_blueprint.get("/material/name/<string:material_name>")
 @jwt_required()
 def list_orders_by_material_name(material_name):
     """
@@ -65,7 +71,7 @@ def list_orders_by_material_name(material_name):
 
 
 
-@api_blueprint.put("/order/<int:order_id>/delivered")
+@api_blueprint.put("/<int:order_id>/delivered")
 @jwt_required()
 def mark_order_as_delivered(order_id):
     """
@@ -79,7 +85,7 @@ def mark_order_as_delivered(order_id):
     
 
 
-@api_blueprint.post("/order/<int:order_id>/reserve")
+@api_blueprint.post("/<int:order_id>/reserve")
 @jwt_required()
 def reserve_order(order_id):
     """
