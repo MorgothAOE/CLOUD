@@ -26,3 +26,16 @@ class Order(db.Model):
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
     )
     inserted_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'material_id': self.material_id,
+            'cantidad': self.cantidad,
+            'provider_id': self.provider_id,
+            'entregado': self.entregado,
+            'updated_at': self.updated_at,
+            'inserted_at': self.inserted_at
+        }
+

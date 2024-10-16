@@ -6,11 +6,13 @@ from flask import flash
 from flask import session
 from flask import jsonify
 from src.core import orders
+from src.core.orders import Order
 from src.core import providers
 from src.web.schemas.order_schema import order_schema
 from flask_cors import CORS
 import requests
 from src.web.helpers.auth import api_mail_parse
+from src.web.api.api_auth import api_blueprint
 
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
@@ -20,79 +22,87 @@ from flask_jwt_extended import set_refresh_cookies
 from flask_jwt_extended import set_access_cookies
 from flask_jwt_extended import unset_jwt_cookies
 
-api_order_blueprint = Blueprint("api_order", __name__, url_prefix="/api")
-"""
-Agrego un blueprint nuevo para manejar ordenes.
-uso el prefijo /order para todo el controlador
-"""
-
-"""OLD APP IMPLEMENTATION"""
-@api_order_blueprint.post("/login")
-def login():
-    """
-    api que se encarga de corroborar los datos y en caso de ser correctos
-    autentica a un usuario y devuelve un token
-    """
-    data_request = request.get_json()
-    if ('user' in data_request and 'password' in data_request):
-        email = data_request['user']
-        password = data_request['password']
-    else:
-        return {"error": "Parámetros inválidos"}, 400
-    if (api_mail_parse(email)):
-        return {"error": "Parámetros inválidos"}, 400
-    user = providers.check_provider(email, password)
-    if not user:
-        return {"error": "No existe el  usuario"}, 400
-    
-    resp = jsonify({'login': True})
-    access_token = create_access_token(identity={"email": email})
-    set_access_cookies(resp, access_token)
-    return resp, 200
-
-
-@api_order_blueprint.route('/logout', methods=['POST'])
-def logoutfront():
-    resp = jsonify({'logout': True})
-    unset_jwt_cookies(resp)
-    return resp, 200
-
-@api_order_blueprint.get("/test")
+# 1. Endpoint para listar todas las órdenes
+@api_blueprint.get("/order")
 @jwt_required()
-def test():
+def list_all_orders():
     """
-    testea jwt nada mas
+    Lista todas las órdenes.
     """
-    user = get_jwt_identity()
-    if user:
-        return 'sarasa', 200
-    else:
-        return 'no hay jwt creado',400
+    all_orders = orders.list_order() 
+    orders_data = [order.to_dict() for order in all_orders]  
+    return jsonify(orders_data), 200
 
 
-@api_order_blueprint.post("/front-google-login")
-def frontLoginGoogle():
+
+@api_blueprint.get("/order/material/<int:material_id>")
+@jwt_required()
+def list_orders_by_material(material_id):
     """
-    api que recibe un 'authorization_token' del front, se lo envia a google
-    para corroborar la identidad y en caso de ser correcto y
-    estar registrado en la plataforma lo autentica y devuelve un token jwt
+    Lista las órdenes de un material específico por su ID.
     """
-    data_request = request.get_json()
-    if 'code' in data_request:
-        token_acceso = data_request['code']
-        personDataUrl = "https://www.googleapis.com/userinfo/v2/me"
-        personData = requests.get(personDataUrl, headers={
-            "Authorization": f"Bearer {token_acceso}"
-        }).json()
-        if "email" in personData:
-            user = providers.find_user_by_email(personData['email'])
-            if user:
-                access_token = create_access_token(
-                    identity={"email": personData['email']})
-                return {"token": access_token}, 200
-            else:
-                return {"error": "Email no registrado"}, 400
-        else:
-            return {"error": "Fallo la validacion del token con google"}, 400
+    material_orders = orders.get_orders_by_material_id(material_id)
+    if material_orders:
+        orders_data = [order.to_dict() for order in material_orders]
+        return jsonify(orders_data), 200
     else:
-        return {"error": "Parámetros inválidos"}, 400
+        return {"error": "No se encontraron órdenes para el material especificado"}, 404
+
+
+
+@api_blueprint.get("/order/material/name/<string:material_name>")
+@jwt_required()
+def list_orders_by_material_name(material_name):
+    """
+    Lista las órdenes de un material específico por su nombre.
+    """
+    material_orders = orders.get_orders_by_material_name(material_name)
+    if orders:
+        orders_data = [order.to_dict() for order in material_orders]
+        return jsonify(orders_data), 200
+    else:
+        return {"error": "No se encontraron órdenes para el material especificado"}, 404
+
+
+
+@api_blueprint.put("/order/<int:order_id>/delivered")
+@jwt_required()
+def mark_order_as_delivered(order_id):
+    """
+    Marca una orden como entregada si no lo está ya.
+    """
+    order = orders.mark_order_as_delivered(order_id) 
+    if order:
+        return {"message": "La orden fue marcada como entregada correctamente"}, 200
+    else:
+        return {"error": "La orden no existe o ya fue entregada"}, 400
+    
+
+
+@api_blueprint.post("/order/<int:order_id>/reserve")
+@jwt_required()
+def reserve_order(order_id):
+    """
+    Asigna un provider a una orden si no ha sido reservada ya.
+    """
+    current_user = get_jwt_identity()  
+    email = current_user.get("email")  
+
+    provider = providers.find_user_by_email(email)
+
+    if not provider:
+        return {"error": "No tienes permisos para reservar la orden"}, 403
+
+    order = orders.get_order(order_id)
+
+    if not order:
+        return {"error": "La orden no existe"}, 404
+
+    if order.provider_id != 0:
+        return {"error": "La orden ya ha sido reservada"}, 400
+
+    orders.assign_provider(provider, order)
+
+    return {
+        "message": f"La orden {order_id} fue reservada correctamente por el proveedor {provider.nombre_deposito}"
+    }, 200

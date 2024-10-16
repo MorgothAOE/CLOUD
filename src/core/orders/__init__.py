@@ -1,3 +1,4 @@
+from core.materials.material import Material
 from src.core.database import db
 from src.core.orders.order import Order
 
@@ -53,4 +54,24 @@ def get_order(order_id):
         return order
     else:
         return None 
+
+def get_orders_by_material_id(material_id):
+    """
+    Devuelve todas las órdenes relacionadas con un material específico por su id.
+    """
+    orders = Order.query.filter_by(material_id=material_id).all()
+    return orders
+
+
+def get_orders_by_material_name(material_name):
+    """
+    Devuelve todas las órdenes relacionadas con un material específico por su nombre.
+    """
+    material = Material.query.filter_by(nombre=material_name).first()
+    if material:
+        orders = Order.query.filter_by(material_id=material.id).all()
+        return orders
+    else:
+        return None 
+
 

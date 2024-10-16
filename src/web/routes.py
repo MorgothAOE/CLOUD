@@ -1,6 +1,6 @@
 
 from src.web.controllers.order import order_blueprint
-from src.web.api.api_order import api_order_blueprint
+from web.api.api_auth import api_blueprint
 from flask_swagger_ui import get_swaggerui_blueprint
 
 
@@ -11,7 +11,7 @@ def register(app):
    app.register_blueprint(order_blueprint)
 
     # API JSON
-   app.register_blueprint(api_order_blueprint)
+   app.register_blueprint(api_blueprint)
 
 
    SWAGGER_URL="/swagger"
