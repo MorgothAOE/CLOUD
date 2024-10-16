@@ -1,82 +1,200 @@
 {
-    "swagger": "2.0",
-    "info": {
-      "title": "Access API",
-      "version": "1.0.0"
-    },
-    "paths": {
-      "/api/login": {
-        "post": {
-          "description": "Otorga acceso a un usuario registrado",
-          "consumes": [
-            "application/json"
-          ],
-          "produces": [
-            "application/json"
-          ],
-          "parameters": [
-            {
-              "name": "Datos de usuario",
-              "in": "body",
-              "description": "Datos JSON para la api",
-              "required": true,
-              "schema": {
-                "$ref": "#/definitions/LoginData"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": " 'login':True "
-            },
-            "400 1": {
-              "description": " 'error':'Parámetros inválidos' "
-            },
-            "400 2": {
-              "description": " 'error':'No existe el  usuario' "
+  "swagger": "2.0",
+  "info": {
+    "title": "Access API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/login": {
+      "post": {
+        "description": "Otorga acceso a un usuario registrado",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Datos de usuario",
+            "in": "body",
+            "description": "Datos JSON para la api",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginData"
             }
           }
-        }
-      },
-      "/api/test": {
-        "get": {
-          "description": "Testeo de jwt",
-          "produces": [
-            "application/json"
-          ],          
-          "responses": {
-            "200": {
-              "description": "sarasa"
-            }
-          }
-        }
-      },
-      "/api/logout": {
-        "post": {
-          "description": "Cierre de sesion del usuario logeado",
-          "produces": [
-            "application/json"
-          ],          
-          "responses": {
-            "200": {
-              "description": " 'logout': True"
-            }
+        ],
+        "responses": {
+          "200": {
+            "description": " 'login':True "
+          },
+          "400 1": {
+            "description": " 'error':'Parámetros inválidos' "
+          },
+          "400 2": {
+            "description": " 'error':'No existe el usuario' "
           }
         }
       }
     },
-    "definitions": {
-      "LoginData": {
-        "type": "object",
-        "properties": {
-          "user": {
-            "type": "string"
+    "/api/test": {
+      "get": {
+        "description": "Testeo de jwt",
+        "produces": [
+          "application/json"
+        ],          
+        "responses": {
+          "200": {
+            "description": "sarasa"
+          }
+        }
+      }
+    },
+    "/api/logout": {
+      "post": {
+        "description": "Cierre de sesion del usuario logeado",
+        "produces": [
+          "application/json"
+        ],          
+        "responses": {
+          "200": {
+            "description": " 'logout': True"
+          }
+        }
+      }
+    },
+    "/order": {
+      "get": {
+        "description": "Lista todas las órdenes",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Devuelve una lista de todas las órdenes"
+          }
+        }
+      }
+    },
+    "/order/material/{material_id}": {
+      "get": {
+        "description": "Lista las órdenes de un material específico por su ID",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "material_id",
+            "in": "path",
+            "description": "ID del material",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Devuelve una lista de órdenes para el material"
           },
-          "password": {
+          "404": {
+            "description": "No se encontraron órdenes para el material especificado"
+          }
+        }
+      }
+    },
+    "/order/material/name/{material_name}": {
+      "get": {
+        "description": "Lista las órdenes de un material específico por su nombre",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "material_name",
+            "in": "path",
+            "description": "Nombre del material",
+            "required": true,
             "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Devuelve una lista de órdenes para el material"
+          },
+          "404": {
+            "description": "No se encontraron órdenes para el material especificado"
+          }
+        }
+      }
+    },
+    "/order/{order_id}/delivered": {
+      "put": {
+        "description": "Marca una orden como entregada si no lo está ya",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "description": "ID de la orden",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "La orden fue marcada como entregada correctamente"
+          },
+          "400": {
+            "description": "La orden no existe o ya fue entregada"
+          }
+        }
+      }
+    },
+    "/order/{order_id}/reserve": {
+      "post": {
+        "description": "Asigna un provider a una orden si no ha sido reservada ya",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "description": "ID de la orden a reservar",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "La orden fue reservada correctamente"
+          },
+          "400": {
+            "description": "La orden ya ha sido reservada"
+          },
+          "403": {
+            "description": "No tienes permisos para reservar la orden"
+          },
+          "404": {
+            "description": "La orden no existe"
           }
         }
       }
     }
+  },
+  "definitions": {
+    "LoginData": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    }
   }
-  
+}
