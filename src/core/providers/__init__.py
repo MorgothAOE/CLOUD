@@ -47,3 +47,5 @@ def check_password(user, password):
     usuario pasado como parametro    
     """
     return bcrypt.check_password_hash(user.password, password.encode('utf-8'))
+
+
