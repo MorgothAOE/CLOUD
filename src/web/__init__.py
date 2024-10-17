@@ -22,14 +22,18 @@ from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from src.web.controllers.auth import oauth
+import os
+
 session_app = Session()
 """
    PARAM 1: INDICA EL MODO DE EJECUCION DE LA APLICACION
 """
 
 
-def create_app(env="development", static_folder="../../static"):
+def create_app(static_folder="../../static"):
     app = Flask(__name__, static_folder=static_folder)
+
+    env = os.getenv('FLASK_ENV', 'development')
 
     # SON LAS CLAVES PARA QUE ANDE WTFORMS
     app.config.update(dict(

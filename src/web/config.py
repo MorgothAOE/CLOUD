@@ -1,5 +1,6 @@
 # MODULO DE PYTHON PARA LEVANTAR VARIABLES DE ENTORNO
-from os import environ
+import os
+
 
 
 class Config(object):
@@ -34,14 +35,12 @@ class ProductionConfig(Config):
 
     # EN PRODUCCION, LAS VARIABLES DE ENTORNO,
     # SE LLAMAN IGUAL QUE LAS VARIABLES UTILIZADAS
-    DB_USER = "pgadmin"
-    DB_PASS = "changeme"
-    DB_HOST = "10.103.0.2"
-    DB_NAME = "postgres"
+    #DB_USER = "pgadmin"
+    #DB_PASS = "changeme"
+    #DB_HOST = "10.103.0.2"
+    #DB_NAME = "postgres"
     SQLALCHEMY_TRACK_MODIFICATIONS = True
-    SQLALCHEMY_DATABASE_URI = (
-        f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:5432/{DB_NAME}"
-    )
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
 
 
 class DevelopmentConfig(Config):
