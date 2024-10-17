@@ -1,4 +1,4 @@
-from core.materials.material import Material
+from src.core.materials.material import Material
 from src.core.database import db
 from src.core.orders.order import Order
 
