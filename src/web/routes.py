@@ -1,7 +1,6 @@
 
-#from src.web.controllers.order import order_blueprint
-from web.api.api_auth import api_blueprint
-from web.api.api_order import order_blueprint
+from src.web.api.api_auth import api_blueprint
+from src.web.api.api_order import order_blueprint
 from flask_swagger_ui import get_swaggerui_blueprint
 
 
