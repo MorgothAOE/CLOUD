@@ -29,7 +29,7 @@ Agrego un blueprint nuevo para manejar ordenes.
 uso el prefijo /order para todo el controlador
 """
 
-@api_blueprint.get()
+@api_blueprint.get("/")
 @jwt_required()
 def list_all_orders():
     """
