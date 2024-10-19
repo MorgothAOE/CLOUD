@@ -33,8 +33,8 @@ class MaterialProvider(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True)
     material_id = db.Column(db.Integer, db.ForeignKey('materials.id'), nullable=False)
     provider_id = db.Column(db.Integer, db.ForeignKey('providers.id'), default=0)
-    material = db.relationship("Material", backref="orders")
-    provider = db.relationship("Provider", backref="providers")
+    #material = db.relationship("Material", backref="material_providers")
+    #provider = db.relationship("Provider", backref="material_providers")
     updated_at = db.Column(
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
     )

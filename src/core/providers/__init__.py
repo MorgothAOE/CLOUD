@@ -1,5 +1,5 @@
 from src.core.database import db
-from src.core.providers.provider import Provider
+from src.core.providers.provider import MaterialProvider, Provider
 from src.core.bcrypt import bcrypt
 
 
@@ -39,6 +39,7 @@ def check_provider(email, password):
         return user
     else:
         return None
+  
     
 def check_password(user, password):
     """
@@ -49,3 +50,29 @@ def check_password(user, password):
     return bcrypt.check_password_hash(user.password, password.encode('utf-8'))
 
 
+def get_all_material_providers():
+    """
+    Devuelve una lista de todas las relaciones de MaterialProvider.
+    """
+    return MaterialProvider.query.all()
+
+
+def get_materials_by_provider(provider_id):
+    """
+    Devuelve una lista de todos los materiales que provee un proveedor dado su ID.
+    """
+    return MaterialProvider.query.filter_by(provider_id=provider_id).all()
+
+
+def get_providers_by_material(material_id):
+    """
+    Devuelve una lista de todos los proveedores que proveen un material dado su ID.
+    """
+    return MaterialProvider.query.filter_by(material_id=material_id).all()
+
+
+def get_material_provider(provider_id, material_id):
+    """
+    Devuelve la relación MaterialProvider entre un proveedor y un material específicos.
+    """
+    return MaterialProvider.query.filter_by(provider_id=provider_id, material_id=material_id).first()

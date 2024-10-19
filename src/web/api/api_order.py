@@ -1,3 +1,4 @@
+from core.providers.provider import MaterialProvider
 from flask import Blueprint
 from flask import request
 from flask import redirect
@@ -77,6 +78,16 @@ def mark_order_as_delivered(order_id):
     """
     Marca una orden como entregada si no lo está ya.
     """
+    current_user = get_jwt_identity()
+    email = current_user.get("email")
+
+    provider = providers.find_user_by_email(email)
+    order = orders.get_order(order_id)
+    if not provider or order.provider_id != provider.id:
+        return {"error": "No tienes permisos para entregar la orden"}, 403
+    if not order.reserved_at:
+        return {"error": "No se puede entregar una orden no reservada"}, 403
+    
     order = orders.mark_order_as_delivered(order_id) 
     if order:
         return {"message": "La orden fue marcada como entregada correctamente"}, 200
@@ -89,10 +100,11 @@ def mark_order_as_delivered(order_id):
 @jwt_required()
 def reserve_order(order_id):
     """
-    Asigna un provider a una orden si no ha sido reservada ya.
+    Asigna un proveedor a una orden si no ha sido reservada ya y verifica que el proveedor
+    esté registrado como proveedor del material asociado a la orden.
     """
-    current_user = get_jwt_identity()  
-    email = current_user.get("email")  
+    current_user = get_jwt_identity()
+    email = current_user.get("email")
 
     provider = providers.find_user_by_email(email)
 
@@ -107,8 +119,15 @@ def reserve_order(order_id):
     if order.provider_id != 0:
         return {"error": "La orden ya ha sido reservada"}, 400
 
-    orders.assign_provider(provider, order)
+    # Verificar si el proveedor está registrado para el material de la orden
+    material_provider = providers.get_material_provider(provider.id, order.material_id)
+    if not material_provider:
+        return {"error": f"El proveedor {provider.nombre_deposito} no está registrado para este material"}, 403
+
+    # Asignar el proveedor y actualizar la fecha de reserva
+    orders.reserve_order(provider, order)
 
     return {
         "message": f"La orden {order_id} fue reservada correctamente por el proveedor {provider.nombre_deposito}"
     }, 200
+

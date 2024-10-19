@@ -1,3 +1,4 @@
+from datetime import datetime
 from src.core.materials.material import Material
 from src.core.database import db
 from src.core.orders.order import Order
@@ -18,8 +19,9 @@ def create_order(**kwargs):
 
     return order
 
-def assign_provider(provider, orden):
+def reserve_order(provider, orden):
     orden.provider_id.append(provider)
+    orden.reserved_at = datetime.utcnow()
     db.session.add(orden)
     db.session.commit()
     return orden
@@ -36,9 +38,9 @@ def mark_order_as_delivered(order_id):
     """
     order = Order.query.get(order_id)
     if order:
-        if order.entregado:
+        if order.delivered_at:
             return None 
-        order.entregado = True
+        order.delivered_at = datetime.utcnow()
         db.session.commit()
         return order
     else:
