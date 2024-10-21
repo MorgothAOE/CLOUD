@@ -76,3 +76,12 @@ def get_material_provider(provider_id, material_id):
     Devuelve la relación MaterialProvider entre un proveedor y un material específicos.
     """
     return MaterialProvider.query.filter_by(provider_id=provider_id, material_id=material_id).first()
+
+
+def add_for_material(**kwargs):
+    """
+    Esta función registra a un proveedor para cierto material.
+    """
+    mp = MaterialProvider(**kwargs)
+    db.session.add(mp)
+    db.session.commit()
