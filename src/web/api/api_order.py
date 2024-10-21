@@ -1,4 +1,4 @@
-from core.providers.provider import MaterialProvider
+from src.core.providers.provider import MaterialProvider
 from flask import Blueprint
 from flask import request
 from flask import redirect
