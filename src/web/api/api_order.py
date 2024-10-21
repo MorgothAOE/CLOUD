@@ -151,8 +151,10 @@ def register_provider_for_material(material_id):
     if not material:
         return make_response(jsonify({'error': 'No se encontró el material'}), 404)
 
-    providers.add_for_material(material)
+    providers.add_for_material(
+        provider_id=provider.id,
+        material_id=material_id
+    )
 
     return make_response(jsonify({
-        'message': f'Se registró correctamente al proveedor {provider.nombre_deposito} 
-        para el material {material.nombre}'}), 201)
+        'message': f'Se registró correctamente al proveedor {provider.nombre_deposito} para el material {material.nombre}'}), 201)
