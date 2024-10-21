@@ -16,3 +16,10 @@ def create_materials(**kwargs):
     db.session.commit()
 
     return material
+
+
+def get_material_by_id(material_id):
+    """
+    Función que obtiene un material por su id (único).
+    """
+    return Material.query.filter_by(id=material_id).first()
