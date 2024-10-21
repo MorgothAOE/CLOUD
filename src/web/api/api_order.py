@@ -23,7 +23,7 @@ from flask_jwt_extended import set_access_cookies
 from flask_jwt_extended import unset_jwt_cookies
 
 
-order_blueprint = Blueprint("order", __name__, url_prefix="/order")
+order_blueprint = Blueprint("order", __name__, url_prefix="/api/order")
 """
 Agrego un blueprint nuevo para manejar ordenes.
 uso el prefijo /order para todo el controlador
@@ -131,7 +131,7 @@ def reserve_order(order_id):
     }, 200
 
 
-@api_blueprint.post("/material/register/<int:material_id>")
+@order_blueprint.post("/material/register/<int:material_id>")
 @jwt_required
 def register_provider_for_material(material_id):
     """
