@@ -6,9 +6,11 @@ from flask import url_for
 from flask import flash
 from flask import session
 from flask import jsonify
+from flask import make_response
 from src.core import orders
 from src.core.orders import Order
 from src.core import providers
+from src.core import materials
 from src.web.schemas.order_schema import order_schema
 from flask_cors import CORS
 import requests
@@ -131,3 +133,29 @@ def reserve_order(order_id):
         "message": f"La orden {order_id} fue reservada correctamente por el proveedor {provider.nombre_deposito}"
     }, 200
 
+
+@api_blueprint.post("/material/register/<int:material_id>")
+@jwt_required
+def register_provider_for_material(material_id):
+    """
+    Se recibe el endpoint del material y se registra al proveedor
+    que llama para ese material.
+    """
+
+    current_user = get_jwt_identity()
+
+    provider = providers.find_user_by_email(current_user.get('email'))
+
+    if not provider:
+        return make_response(jsonify({'error': 'No tienes permisos para reservar la orden'}), 403)
+
+    material = materials.get_material_by_id(material_id)
+
+    if not material:
+        return make_response(jsonify({'error': 'No se encontró el material'}), 404)
+
+    providers.register_for_material(material)
+
+    return make_response(jsonify({
+        'message': f'Se registró correctamente al proveedor {provider.nombre_deposito} 
+        para el material {material.nombre}'}), 201)
