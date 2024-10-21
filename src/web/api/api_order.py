@@ -13,9 +13,6 @@ from src.core import providers
 from src.core import materials
 from src.web.schemas.order_schema import order_schema
 from flask_cors import CORS
-import requests
-from src.web.helpers.auth import api_mail_parse
-from src.web.api.api_auth import api_blueprint
 
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
@@ -32,7 +29,7 @@ Agrego un blueprint nuevo para manejar ordenes.
 uso el prefijo /order para todo el controlador
 """
 
-@api_blueprint.get("/")
+@order_blueprint.get("/")
 @jwt_required()
 def list_all_orders():
     """
@@ -44,7 +41,7 @@ def list_all_orders():
 
 
 
-@api_blueprint.get("/material/<int:material_id>")
+@order_blueprint.get("/material/<int:material_id>")
 @jwt_required()
 def list_orders_by_material(material_id):
     """
@@ -59,7 +56,7 @@ def list_orders_by_material(material_id):
 
 
 
-@api_blueprint.get("/material/name/<string:material_name>")
+@order_blueprint.get("/material/name/<string:material_name>")
 @jwt_required()
 def list_orders_by_material_name(material_name):
     """
@@ -74,7 +71,7 @@ def list_orders_by_material_name(material_name):
 
 
 
-@api_blueprint.put("/<int:order_id>/delivered")
+@order_blueprint.put("/<int:order_id>/delivered")
 @jwt_required()
 def mark_order_as_delivered(order_id):
     """
@@ -98,7 +95,7 @@ def mark_order_as_delivered(order_id):
     
 
 
-@api_blueprint.post("/<int:order_id>/reserve")
+@order_blueprint.post("/<int:order_id>/reserve")
 @jwt_required()
 def reserve_order(order_id):
     """
