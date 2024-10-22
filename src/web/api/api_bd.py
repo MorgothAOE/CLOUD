@@ -8,7 +8,7 @@ from src.core.board import seeds
 
 # Estos endpoints son para configurar la BD de producción.
 
-bd_blueprint = Blueprint("bd", __name__, url_prefix="/bd")
+bd_blueprint = Blueprint("bd", __name__, url_prefix="/api/db")
 
 
 @api_blueprint.post("/reset-db")
