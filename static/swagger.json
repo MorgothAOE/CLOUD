@@ -135,6 +135,12 @@
           },
           "400": {
             "description": "La orden no existe o ya fue entregada"
+          },
+          "403 1": {
+            "description": "No tienes permisos para entregar la orden"
+          },
+          "403 2": {
+            "description": "No se puede entregar una orden no reservada"
           }
         }
       }
@@ -161,8 +167,11 @@
           "400": {
             "description": "La orden ya ha sido reservada"
           },
-          "403": {
+          "403 1": {
             "description": "No tienes permisos para reservar la orden"
+          },
+          "403 2": {
+            "description": "El proveedor no está registrado para este material"
           },
           "404": {
             "description": "La orden no existe"
