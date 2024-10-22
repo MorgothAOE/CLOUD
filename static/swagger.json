@@ -51,72 +51,62 @@
         }
       }
     },
-    "/api/order": {
+    "/api/order/list": {
       "get": {
-        "description": "Lista todas las órdenes",
-        "produces": [
-          "application/json"
-        ],
-        "responses": {
-          "200": {
-            "description": "Devuelve una lista de todas las órdenes"
-          }
-        }
-      }
-    },
-    "/api/order/material/{material_id}": {
-      "get": {
-        "description": "Lista las órdenes de un material específico por su ID",
+        "description": "Filtra órdenes basadas en: material_id o material_name (Si hay id, este se desestima), rango de fechas, y si las órdenes no están reservadas y aún están disponibles.",
         "produces": [
           "application/json"
         ],
         "parameters": [
           {
             "name": "material_id",
-            "in": "path",
-            "description": "ID del material",
-            "required": true,
+            "in": "query",
+            "description": "ID del material para filtrar",
+            "required": false,
             "type": "integer"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Devuelve una lista de órdenes para el material"
           },
-          "404": {
-            "description": "No se encontraron órdenes para el material especificado"
-          }
-        }
-      }
-    },
-    "/api/order/material/name/{material_name}": {
-      "get": {
-        "description": "Lista las órdenes de un material específico por su nombre",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
           {
             "name": "material_name",
-            "in": "path",
-            "description": "Nombre del material",
-            "required": true,
+            "in": "query",
+            "description": "Nombre del material para filtrar",
+            "required": false,
             "type": "string"
+          },
+          {
+            "name": "start_date",
+            "in": "query",
+            "description": "Fecha de inicio del rango (formato: YYYY-MM-DD)",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "description": "Fecha de fin del rango (formato: YYYY-MM-DD)",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "only_unreserved",
+            "in": "query",
+            "description": "Si es true, solo muestra órdenes no reservadas y disponibles",
+            "required": false,
+            "type": "boolean"
           }
         ],
         "responses": {
           "200": {
-            "description": "Devuelve una lista de órdenes para el material"
+            "description": "Devuelve una lista de órdenes filtradas"
           },
           "404": {
-            "description": "No se encontraron órdenes para el material especificado"
+            "description": "No se encontraron órdenes con los filtros proporcionados"
           }
         }
       }
     },
     "/api/order/{order_id}/delivered": {
       "put": {
-        "description": "Marca una orden como entregada si no lo está ya",
+        "description": "Marca una orden como entregada si no lo está ya.",
         "produces": [
           "application/json"
         ],
@@ -136,18 +126,15 @@
           "400": {
             "description": "La orden no existe o ya fue entregada"
           },
-          "403 1": {
-            "description": "No tienes permisos para entregar la orden"
-          },
-          "403 2": {
-            "description": "No se puede entregar una orden no reservada"
+          "403": {
+            "description": "No tienes permisos para entregar la orden o no se puede entregar una orden no reservada"
           }
         }
       }
     },
     "/api/order/{order_id}/reserve": {
       "post": {
-        "description": "Asigna un provider a una orden si no ha sido reservada ya",
+        "description": "Asigna un proveedor a una orden si no ha sido reservada ya y el proveedor está registrado para el material de la orden.",
         "produces": [
           "application/json"
         ],
@@ -165,13 +152,10 @@
             "description": "La orden fue reservada correctamente"
           },
           "400": {
-            "description": "La orden ya ha sido reservada"
+            "description": "La orden ya ha sido reservada o ya no se encuentra disponible"
           },
-          "403 1": {
-            "description": "No tienes permisos para reservar la orden"
-          },
-          "403 2": {
-            "description": "El proveedor no está registrado para este material"
+          "403": {
+            "description": "No tienes permisos para reservar la orden o el proveedor no está registrado para este material"
           },
           "404": {
             "description": "La orden no existe"

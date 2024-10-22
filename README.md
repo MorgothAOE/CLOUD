@@ -2,6 +2,7 @@
 
 URL: https://cloud-fd43.onrender.com
 
+
 ## Variables de entorno
 - En nuestro caso, manemos 2 variables de entorno.
   - `FLASK_ENV`: Para determinar el ambiente en el que estamos y cargar la configuración adecuada.
@@ -16,3 +17,6 @@ URL: https://cloud-fd43.onrender.com
     ```powershell
     set FLASK_ENV=development
     ```
+
+## Datos cargados
+- En el archivo ubicado en src/core/board de nombre 'seeds.py' se especifican los datos cargados en la base de datos para realizar las pruebas

@@ -13,7 +13,9 @@ from src.core import providers
 from src.core import materials
 from src.web.schemas.order_schema import order_schema
 from flask_cors import CORS
-
+from flask import request, jsonify
+from datetime import datetime
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
@@ -29,45 +31,46 @@ Agrego un blueprint nuevo para manejar ordenes.
 uso el prefijo /order para todo el controlador
 """
 
-@order_blueprint.get("/")
+
+@order_blueprint.get("/list")
 @jwt_required()
-def list_all_orders():
+def list_orders():
     """
-    Lista todas las órdenes.
+    Filtra órdenes basadas en material_id, material_name, rango de fechas (inserted_at),
+    y si las órdenes no están reservadas y aún están disponibles.
     """
-    all_orders = orders.list_order() 
-    orders_data = [order.to_dict() for order in all_orders]  
-    return jsonify(orders_data), 200
+    material_id = request.args.get("material_id")
+    material_name = request.args.get("material_name")
+    start_date = request.args.get("start_date")  # Formato esperado: "YYYY-MM-DD"
+    end_date = request.args.get("end_date")      # Formato esperado: "YYYY-MM-DD"
+    only_unreserved = request.args.get("only_unreserved", type=bool, default=False)  # Filtrar solo las no reservadas
 
+    filtered_orders = []
 
+    if material_id:
+        filtered_orders = orders.get_orders_by_material_id(material_id)
+    elif material_name:
+        filtered_orders = orders.get_orders_by_material_name(material_name)
+    else:
+        filtered_orders = orders.list_order()
 
-@order_blueprint.get("/material/<int:material_id>")
-@jwt_required()
-def list_orders_by_material(material_id):
-    """
-    Lista las órdenes de un material específico por su ID.
-    """
-    material_orders = orders.get_orders_by_material_id(material_id)
-    if material_orders:
-        orders_data = [order.to_dict() for order in material_orders]
+    if start_date and end_date:
+        start_date = datetime.strptime(start_date, "%Y-%m-%d")
+        end_date = datetime.strptime(end_date, "%Y-%m-%d")
+        filtered_orders = [order for order in filtered_orders if start_date <= order.inserted_at <= end_date]
+
+    if only_unreserved:
+        filtered_orders = [
+            order for order in filtered_orders
+            if order.reserved_at is None and order.available_until > datetime.utcnow()
+        ]
+
+    orders_data = [order.to_dict() for order in filtered_orders]
+
+    if orders_data:
         return jsonify(orders_data), 200
     else:
-        return {"error": "No se encontraron órdenes para el material especificado"}, 404
-
-
-
-@order_blueprint.get("/material/name/<string:material_name>")
-@jwt_required()
-def list_orders_by_material_name(material_name):
-    """
-    Lista las órdenes de un material específico por su nombre.
-    """
-    material_orders = orders.get_orders_by_material_name(material_name)
-    if orders:
-        orders_data = [order.to_dict() for order in material_orders]
-        return jsonify(orders_data), 200
-    else:
-        return {"error": "No se encontraron órdenes para el material especificado"}, 404
+        return jsonify({"error": "No se encontraron órdenes con los filtros proporcionados"}), 404
 
 
 
@@ -117,6 +120,9 @@ def reserve_order(order_id):
 
     if order.provider_id != 0:
         return {"error": "La orden ya ha sido reservada"}, 400
+    
+    if order.available_until != None and order.available_until < datetime.utcnow():
+        return {"error": "La orden ya no se encuentra disponible"}, 400
 
     # Verificar si el proveedor está registrado para el material de la orden
     material_provider = providers.get_material_provider(provider.id, order.material_id)
