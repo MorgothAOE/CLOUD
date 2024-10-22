@@ -170,7 +170,7 @@
         }
       }
     },
-    "/api/order/material/register/<int:material_id>": {
+    "/api/order/material/register/{material_id}": {
       "post": {
         "description": "Registra un proveedor para un material dado",
         "produces": [
