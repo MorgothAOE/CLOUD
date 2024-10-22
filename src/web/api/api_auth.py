@@ -38,12 +38,12 @@ def login():
         email = data_request['user']
         password = data_request['password']
     else:
-        return {"error": "Parámetros inválidos"}, 400
+        return {"error": "Credenciales Invalidas"}, 400
     if (api_mail_parse(email)):
-        return {"error": "Parámetros inválidos"}, 400
+        return {"error": "Credenciales Invalidas"}, 400
     user = providers.check_provider(email, password)
     if not user:
-        return {"error": "No existe el  usuario"}, 400
+        return {"error": "Credenciales Invalidas"}, 400
     
     resp = jsonify({'login': True})
     access_token = create_access_token(identity={"email": email})

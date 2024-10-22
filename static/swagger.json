@@ -29,11 +29,8 @@
           "200": {
             "description": " 'login':True "
           },
-          "400 1": {
-            "description": " 'error':'Parámetros inválidos' "
-          },
-          "400 2": {
-            "description": " 'error':'No existe el usuario' "
+          "400": {
+            "description": "Credenciales Invalidas"
           }
         }
       }
@@ -187,6 +184,45 @@
           },
           "404": {
             "description": "No se encontró el material"
+          }
+        }
+      }
+    },
+    "/api/order/material_list": {
+      "get": {
+        "description": "Muestra la lista de materias de ids con sus nombres",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de materiales"
+          }
+        }
+      }
+    }
+  ,
+    "/api/order/myorders": {
+      "get": {
+        "description": "Devuelve las ordenes que el proveedor tiene a su cargo. Se pueden filtrar si solo estan en estado reservadas o si ya fueron entregadas.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Adminte 2 valores 'reserved' y 'delivered'",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Devuelve una lista de órdenes asignadas al usuario"
+          },
+          "404": {
+            "description": "No se encontraron órdenes asignadas"
           }
         }
       }

@@ -20,8 +20,9 @@ def create_order(**kwargs):
     return order
 
 def reserve_order(provider, orden):
-    orden.provider_id.append(provider)
+    orden.provider_id= provider.id
     orden.reserved_at = datetime.utcnow()
+    orden.reserved = True
     db.session.add(orden)
     db.session.commit()
     return orden
@@ -41,6 +42,7 @@ def mark_order_as_delivered(order_id):
         if order.delivered_at:
             return None 
         order.delivered_at = datetime.utcnow()
+        order.delivered = True
         db.session.commit()
         return order
     else:
@@ -76,4 +78,22 @@ def get_orders_by_material_name(material_name):
     else:
         return None 
 
+def get_orders_by_provider_id(provider_id):
+    """
+    Devuelve todas las órdenes relacionadas con un material específico por su id.
+    """
+    orders = Order.query.filter_by(provider_id=provider_id).all()
+    return orders
 
+def get_orders_by_provider_id_and_status(provider_id, status):
+    """
+    Devuelve todas las órdenes relacionadas con un material específico por su id.
+    """
+    orders = None
+    if(status==0):
+        value=0
+        orders = Order.query.filter_by(provider_id=provider_id, delivered=False).all()
+    elif(status==1):
+        value=1
+        orders = Order.query.filter_by(provider_id=provider_id, delivered=True).all()    
+    return orders

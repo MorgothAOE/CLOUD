@@ -18,13 +18,15 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True)
     material_id = db.Column(db.Integer, db.ForeignKey('materials.id'), nullable=False)
     cantidad = db.Column(db.Float)
-    provider_id = db.Column(db.Integer, db.ForeignKey('providers.id'), default=-1)
+    provider_id = db.Column(db.Integer, db.ForeignKey('providers.id'), nullable=True)
     #material = db.relationship("Material", backref="orders")
     #provider = db.relationship("Provider", backref="providers")
     inserted_at = db.Column(db.DateTime, default=datetime.utcnow)
     available_until = db.Column(db.DateTime)
     reserved_at = db.Column(db.DateTime, nullable=True)
+    reserved = db.Column(db.Boolean, default=False)
     delivered_at = db.Column(db.DateTime, nullable=True)
+    delivered = db.Column(db.Boolean, default=False)
     
     def to_dict(self):
         return {

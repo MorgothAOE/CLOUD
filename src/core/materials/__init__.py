@@ -2,7 +2,7 @@ from src.core.database import db
 from src.core.materials.material import Material
 
 
-def list_providers():
+def list_materials():
     """ DATOS DEL EJEMPLO """
     return Material.query.all()
 

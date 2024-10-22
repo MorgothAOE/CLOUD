@@ -17,8 +17,6 @@ from flask import request, jsonify
 from datetime import datetime
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_jwt_extended import create_access_token
-from flask_jwt_extended import get_jwt_identity
-from flask_jwt_extended import jwt_required
 from flask_jwt_extended import create_refresh_token
 from flask_jwt_extended import set_refresh_cookies
 from flask_jwt_extended import set_access_cookies
@@ -57,12 +55,12 @@ def list_orders():
     if start_date and end_date:
         start_date = datetime.strptime(start_date, "%Y-%m-%d")
         end_date = datetime.strptime(end_date, "%Y-%m-%d")
-        filtered_orders = [order for order in filtered_orders if start_date <= order.inserted_at <= end_date]
+        filtered_orders = [order for order in filtered_orders if start_date <= order.available_until <= end_date]
 
     if only_unreserved:
         filtered_orders = [
             order for order in filtered_orders
-            if order.reserved_at is None and order.available_until > datetime.utcnow()
+            if order.reserved is False and order.available_until > datetime.utcnow()
         ]
 
     orders_data = [order.to_dict() for order in filtered_orders]
@@ -118,7 +116,7 @@ def reserve_order(order_id):
     if not order:
         return {"error": "La orden no existe"}, 404
 
-    if order.provider_id != 0:
+    if order.reserved == True:
         return {"error": "La orden ya ha sido reservada"}, 400
     
     if order.available_until != None and order.available_until < datetime.utcnow():
@@ -138,7 +136,7 @@ def reserve_order(order_id):
 
 
 @order_blueprint.post("/material/register/<int:material_id>")
-@jwt_required
+@jwt_required()
 def register_provider_for_material(material_id):
     """
     Se recibe el endpoint del material y se registra al proveedor
@@ -164,3 +162,44 @@ def register_provider_for_material(material_id):
 
     return make_response(jsonify({
         'message': f'Se registró correctamente al proveedor {provider.nombre_deposito} para el material {material.nombre}'}), 201)
+
+
+
+@order_blueprint.get("/myorders")
+@jwt_required()
+def list_orders_by_material():
+    """
+    Lista las órdenes de un provedor, puede filtrar por reservadas, entregadas o todas.
+    """
+    current_user = get_jwt_identity()
+    provider = providers.find_user_by_email(current_user.get('email'))
+    
+    status = request.args.get("status")
+
+    filtered_orders = []
+    filtered_orders = orders.get_orders_by_provider_id(provider.id)
+
+    if(status):
+        if(status=='reserved'):
+            filtered_orders = [order for order in filtered_orders if order.delivered == False]    
+        elif(status=='delivered'):
+            filtered_orders = [order for order in filtered_orders if order.delivered == True]   
+        
+    orders_data = [order.to_dict() for order in filtered_orders]
+
+    if orders_data:
+        return jsonify(orders_data), 200
+    else:
+        return jsonify({"error": "No se encontraron órdenes a cargo suyo"}), 404
+
+@order_blueprint.get("/material_list")
+@jwt_required()
+def list_materials():
+        
+    filtered_materials = materials.list_materials()
+    material_data = [material.to_dict() for material in filtered_materials]
+
+    if material_data:
+        return jsonify(material_data), 200
+    else:
+        return jsonify({"error": "No hay materiales cargados"}), 404

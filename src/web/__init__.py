@@ -81,6 +81,7 @@ def create_app(static_folder="../../static"):
     # Setup the Flask-JWT-Extended extension
     app.config["JWT_SECRET_KEY"] = "muchoMAYORexcesoDEsaras"  # Change this!
     # Enable csrf double submit protection. See this for a thorough
+    app.config['JWT_COOKIE_CSRF_PROTECT'] = False #En true va a ser necesario pasar el csrf en swagger
     # explanation: http://www.redotheweb.com/2015/11/09/api-security.html
     app.config['JWT_TOKEN_LOCATION'] = ['cookies']
     app.config['JWT_ACCESS_COOKIE_NAME'] = "access_token_cookie"
