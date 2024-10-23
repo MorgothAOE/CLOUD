@@ -11,7 +11,7 @@ from src.core.board import seeds
 bd_blueprint = Blueprint("bd", __name__, url_prefix="/api/db")
 
 
-@api_blueprint.post("/reset-db")
+@bd_blueprint.post("/reset")
 def reset_db():
     try:
         database.reset_db()
@@ -22,7 +22,7 @@ def reset_db():
         return make_response(jsonify({"error": "Database reset failed"}), 400)
 
 
-@api_blueprint.post("/seeds-db")
+@bd_blueprint.post("/seeds")
 def seeds_db():
     try:
         seeds.run()
