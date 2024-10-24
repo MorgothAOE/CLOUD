@@ -57,7 +57,7 @@ def list_orders():
         end_date = datetime.strptime(end_date, "%Y-%m-%d")
         filtered_orders = [order for order in filtered_orders if start_date <= order.available_until <= end_date]
 
-    if only_unreserved and only_unreserved == True:
+    if only_unreserved and only_unreserved == "true":
         filtered_orders = [
             order for order in filtered_orders
             if order.reserved is False and order.available_until > datetime.utcnow()
