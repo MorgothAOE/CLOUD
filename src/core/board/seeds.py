@@ -13,14 +13,12 @@ def run():
     Deberia cargar algunos ejemplos de ordenes emitidas a modo de tener algo en la bd que traer ante consultas
     """
     print("Rellenando la base de datos con datos de prueba...")
-    fecha7 = datetime.datetime.now()
-    fecha7 = fecha7 + datetime.timedelta(days=7)
-    fecha14 = datetime.datetime.now()
-    fecha14 = fecha7 + datetime.timedelta(days=14)
-    fecha31 = datetime.datetime.now()
-    fecha31 = fecha31 + datetime.timedelta(days=31)
-    fecha280 = datetime.datetime.now()
-    fecha280 = fecha280 + datetime.timedelta(days=280)
+    fecha = datetime.datetime.now()
+    fecha7 = fecha + datetime.timedelta(days=7)
+    fecha14 = fecha + datetime.timedelta(days=14)
+    fecha31 = fecha + datetime.timedelta(days=31)
+    fecha280 = fecha + datetime.timedelta(days=280)
+    fechamenos1 = fecha - datetime.timedelta(days=1)
 
     """
     --------------------------------------------------------------------------
@@ -152,6 +150,11 @@ def run():
         reserved = True,
         reserved_at = datetime.datetime.now(),
         delivered_at = datetime.datetime.now()
+    )
+    orden11 = orders.create_order(
+        available_until=fechamenos1,
+        material_id = mhierro.id,
+        cantidad = "70"
     )
     #orders.assign_material(material1,orden1)
     #orders.assign_provider(provider2,orden1)
