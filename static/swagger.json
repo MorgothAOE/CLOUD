@@ -86,7 +86,7 @@
           {
             "name": "only_unreserved",
             "in": "query",
-            "description": "Si es true, solo muestra órdenes no reservadas y disponibles",
+            "description": "Si es true, solo muestra órdenes no reservadas y disponibles (default False)",
             "required": false,
             "type": "boolean"
           }
