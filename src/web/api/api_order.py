@@ -29,6 +29,8 @@ Agrego un blueprint nuevo para manejar ordenes.
 uso el prefijo /order para todo el controlador
 """
 
+def is_it_true(value):
+    return value.lower() == 'true'
 
 @order_blueprint.get("/list")
 @jwt_required()
@@ -41,7 +43,7 @@ def list_orders():
     material_name = request.args.get("material_name")
     start_date = request.args.get("start_date")  # Formato esperado: "YYYY-MM-DD"
     end_date = request.args.get("end_date")      # Formato esperado: "YYYY-MM-DD"
-    only_unreserved = request.args.get("only_unreserved", type=bool, default=False)  # Filtrar solo las no reservadas
+    only_unreserved = request.args.get("only_unreserved", default=False, type=is_it_true)  # Filtrar solo las no reservadas
 
     filtered_orders = []
 
@@ -57,7 +59,7 @@ def list_orders():
         end_date = datetime.strptime(end_date, "%Y-%m-%d")
         filtered_orders = [order for order in filtered_orders if start_date <= order.available_until <= end_date]
 
-    if only_unreserved and only_unreserved == "true":
+    if only_unreserved:
         filtered_orders = [
             order for order in filtered_orders
             if order.reserved is False and order.available_until > datetime.utcnow()
