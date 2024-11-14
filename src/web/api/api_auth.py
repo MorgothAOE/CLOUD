@@ -48,7 +48,7 @@ def login():
     resp = jsonify({'login': True})
     access_token = create_access_token(identity={"email": email})
     set_access_cookies(resp, access_token)
-    return resp, 200
+    return access_token, 200
 
 
 @api_blueprint.route('/logout', methods=['POST'])
@@ -70,29 +70,4 @@ def test():
         return 'no hay jwt creado',400
 
 
-@api_blueprint.post("/front-google-login")
-def frontLoginGoogle():
-    """
-    api que recibe un 'authorization_token' del front, se lo envia a google
-    para corroborar la identidad y en caso de ser correcto y
-    estar registrado en la plataforma lo autentica y devuelve un token jwt
-    """
-    data_request = request.get_json()
-    if 'code' in data_request:
-        token_acceso = data_request['code']
-        personDataUrl = "https://www.googleapis.com/userinfo/v2/me"
-        personData = requests.get(personDataUrl, headers={
-            "Authorization": f"Bearer {token_acceso}"
-        }).json()
-        if "email" in personData:
-            user = providers.find_user_by_email(personData['email'])
-            if user:
-                access_token = create_access_token(
-                    identity={"email": personData['email']})
-                return {"token": access_token}, 200
-            else:
-                return {"error": "Email no registrado"}, 400
-        else:
-            return {"error": "Fallo la validacion del token con google"}, 400
-    else:
-        return {"error": "Parámetros inválidos"}, 400
+
