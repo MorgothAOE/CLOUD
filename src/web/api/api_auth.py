@@ -48,7 +48,7 @@ def login():
     resp = jsonify({'login': True})
     access_token = create_access_token(identity={"email": email})
     set_access_cookies(resp, access_token)
-    return access_token, 200
+    return resp, 200
 
 
 @api_blueprint.route('/logout', methods=['POST'])
