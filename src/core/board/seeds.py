@@ -58,6 +58,12 @@ def run():
         password = "juan123"
     )
     
+    provider3 = providers.create_provider(
+        email = "aye.prat",
+        nombre_deposito = "Plaza Mateu",
+        password = "bpm"
+    )
+    
     """
     --------------------------------------------------------------------------
         SE ASIGNAN LOS MATERIALES
