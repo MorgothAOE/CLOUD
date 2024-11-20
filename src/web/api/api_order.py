@@ -206,21 +206,13 @@ def list_materials():
     else:
         return jsonify({"error": "No hay materiales cargados"}), 404
     
-@order_blueprint.get("/material/registerd/<int:material_id>")
+@order_blueprint.get("/material/registerd")
 @jwt_required()
-def material_registered(material_id):        
+def material_registered():        
     
     current_user = get_jwt_identity()
     provider = providers.find_user_by_email(current_user.get('email'))
     materials = providers.get_materials_by_provider(provider.id)
-
-    registered = False
-
-    for m in materials:
-        if m.id == material_id:
-            registered = True
-
-    if registered:
-        return jsonify("True"), 200
-    else:
-        return jsonify({"error": "El usuario no esta registrado para ese material"}), 404
+    registered = [ material.id for material in materials ]
+    
+    return jsonify(registered), 200
