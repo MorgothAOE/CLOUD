@@ -2,7 +2,7 @@
 # version: "3"
 services:
   postgres:
-    container_name: service_search_postgres
+    container_name: api_search_postgres
     image: postgres
     environment:
       POSTGRES_USER: ${DB_USER:-pgadmin}
@@ -19,7 +19,7 @@ services:
     restart: unless-stopped
 
   pgadmin:
-    container_name: service_search_pgadmin
+    container_name: api_search_pgadmin
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin@pgadmin.com}
@@ -38,7 +38,7 @@ networks:
     ipam:
       driver: default
       config:
-      - subnet:  10.103.0.1/16
+      - subnet:  10.103.0.0/16
 
 volumes:
   postgres:

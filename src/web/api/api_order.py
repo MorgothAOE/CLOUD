@@ -195,7 +195,7 @@ def list_orders_by_material():
         return jsonify({"error": "No se encontraron órdenes a cargo suyo"}), 404
 
 @order_blueprint.get("/material_list")
-#@jwt_required()
+@jwt_required()
 def list_materials():
         
     filtered_materials = materials.list_materials()
