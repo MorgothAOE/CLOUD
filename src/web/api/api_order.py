@@ -157,10 +157,11 @@ def register_provider_for_material(material_id):
     if not material:
         return make_response(jsonify({'error': 'No se encontró el material'}), 404)
 
-    providers.add_for_material(
-        provider_id=provider.id,
-        material_id=material_id
-    )
+    if not providers.check_if_added(provider.id,material_id):
+        providers.add_for_material(
+            provider_id=provider.id,
+            material_id=material_id
+        )
 
     return make_response(jsonify({
         'message': f'Se registró correctamente al proveedor {provider.nombre_deposito} para el material {material.nombre}'}), 201)
@@ -213,6 +214,6 @@ def material_registered():
     current_user = get_jwt_identity()
     provider = providers.find_user_by_email(current_user.get('email'))
     materials = providers.get_materials_by_provider(provider.id)
-    registered = [ material.id for material in materials ]
+    registered = [ material.material_id for material in materials ]
     
     return jsonify(registered), 200

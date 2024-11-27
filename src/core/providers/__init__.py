@@ -82,6 +82,10 @@ def add_for_material(**kwargs):
     """
     Esta función registra a un proveedor para cierto material.
     """
+
     mp = MaterialProvider(**kwargs)
     db.session.add(mp)
     db.session.commit()
+
+def check_if_added(provider_id, material_id):
+    return MaterialProvider.query.filter_by(provider_id=provider_id, material_id=material_id).first()
